@@ -11,3 +11,8 @@ sky:
     access-key-id: LTAI5tHzX4fMjySKcCoCvYci
     access-key-secret: vPKhVa4Kux8jUP6fU4614CQ3FW0wiC
     bucket-name: cangqiongwaimaipbj
+  redis:
+    host: 120.26.140.240
+    port: 6379
+    password: Qcb258036
+    database: 10
