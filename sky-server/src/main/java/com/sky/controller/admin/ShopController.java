@@ -10,6 +10,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Set;
+
 @Slf4j
 @RestController("adminShopController") //一般无参数，该参数用来命名Bean,以与用户端的Bean做区分
 @Api(tags = "店铺相关接口")
@@ -34,4 +36,5 @@ public class ShopController {
         log.info("当前店铺的营业状态为：{}",status==1? "营业中":"已打烊");
         return Result.success(status);
     }
+
 }
