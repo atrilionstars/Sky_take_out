@@ -17,4 +17,12 @@ public interface SetmealDishMapper {
     List<Long> getSetmealIdsByDishIds(List<Long> dishIds);
 
     void insertBatch(List<SetmealDish> setmealDishes);
+
+    /**
+     * 根据套餐id删除
+     *
+     * @param setmealId
+     */
+    @Delete("delete from setmeal_dish where setmeal_id = #{setmealId}")
+    void deleteBySetmealId(Long setmealId);
 }

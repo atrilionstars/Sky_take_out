@@ -1,8 +1,12 @@
 package com.sky.service.impl;
 
+import com.sky.constant.MessageConstant;
+import com.sky.constant.StatusConstant;
 import com.sky.dto.SetmealDTO;
+import com.sky.entity.Dish;
 import com.sky.entity.Setmeal;
 import com.sky.entity.SetmealDish;
+import com.sky.exception.SetmealEnableFailedException;
 import com.sky.mapper.DishMapper;
 import com.sky.mapper.SetmealDishMapper;
 import com.sky.mapper.SetmealMapper;
@@ -68,4 +72,50 @@ public class SetmealServiceImpl implements SetmealService {
     public List<DishItemVO> getDishItemById(Long id) {
         return setmealMapper.getDishItemBySetmealId(id);
     }
+
+    /**
+     * 更新套餐
+     *
+     * @param setmealDTO
+     */
+    @Override
+    @Transactional
+    public void update(SetmealDTO setmealDTO) {
+        Setmeal setmeal = new Setmeal();
+        BeanUtils.copyProperties(setmealDTO, setmeal);
+        // 更新套餐
+        setmealMapper.update(setmeal);
+        // 更新套餐和菜品的关联关系
+        Long setmealId = setmeal.getId();
+        setmealDishMapper.deleteBySetmealId(setmealId);
+        List<SetmealDish> setmealDishes = setmealDTO.getSetmealDishes();
+        setmealDishes.forEach(sd -> {
+            sd.setSetmealId(setmealId);
+        });
+        setmealDishMapper.insertBatch(setmealDishes);
+    }
+    /**
+     * 上架或下架
+     *
+     * @param status
+     * @param id
+     */
+    @Override
+    public void startOrStop(Integer status, Long id) {
+        // 有停售菜品提示"套餐内包含未启售菜品，无法启售"
+        if (status == StatusConstant.ENABLE) {
+            List<Dish> dishList = dishMapper.getBySetmealId(id);
+            if (dishList != null && dishList.size() > 0) {
+                dishList.forEach(dish -> {
+                    if (dish.getStatus() == StatusConstant.DISABLE) {
+                        throw new SetmealEnableFailedException(MessageConstant.SETMEAL_ENABLE_FAILED);
+                    }
+                });
+            }
+        }
+
+        Setmeal setmeal = Setmeal.builder().id(id).status(status).build();
+        setmealMapper.update(setmeal);
+    }
+
 }
