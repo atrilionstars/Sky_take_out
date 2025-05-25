@@ -149,9 +149,9 @@ public class DishServiceImpl implements DishService {
         }
     }
 
-    public List<Dish> list(Long categoryid){
+    public List<Dish> list(Long categoryId){
         Dish dish = Dish.builder()
-                .categoryId(categoryid)
+                .categoryId(categoryId)
                 .status(StatusConstant.ENABLE)
                 .build();
         return dishMapper.list(dish);
@@ -200,7 +200,7 @@ public class DishServiceImpl implements DishService {
             dishIds.add(id);
             // select setmeal_id from setmeal_dish where dish_id in (?,?,?)
             List<Long> setmealIds = setmealDishMapper.getSetmealIdsByDishIds(dishIds);
-            if (setmealIds != null && setmealIds.size() > 0) {
+            if (setmealIds != null && !setmealIds.isEmpty()) {
                 for (Long setmealId : setmealIds) {
                     Setmeal setmeal = Setmeal.builder()
                             .id(setmealId)
